@@ -1,0 +1,27 @@
+﻿
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+
+namespace Eventos_API.Models
+{
+    public class Usuario
+    {
+        [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.None)]
+        public int Id { get; set; }
+
+        public string Name { get; set; }
+
+        public string Surname1 { get; set; }
+
+        public string Surname2 { get; set; }
+
+        public string Location { get; set; }
+
+        public DateTime BirthDate { get; set; }
+        public int Age { get; set; }
+
+        public int High { get; set; }
+
+    }
+}
