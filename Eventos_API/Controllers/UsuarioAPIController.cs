@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace Eventos_API.Controllers
 {
@@ -14,15 +15,19 @@ namespace Eventos_API.Controllers
     {
         // LOGGER EN EL CONTROLADOR
         private readonly ILogger<UsuarioAPIController> _logger;
-        public UsuarioAPIController(ILogger<UsuarioAPIController> logger) {
+
+        private readonly ApplicationDBContext _dbContext;
+        public UsuarioAPIController(ILogger<UsuarioAPIController> logger, ApplicationDBContext dbContext)
+        {
             _logger = logger;
+            _dbContext = dbContext;
         }
 
         [HttpGet]
         public ActionResult<IEnumerable<UsuarioDTO>> GetUsuarios()
         {
             _logger.LogInformation("Devolvemos la Lista de Usuarios");
-            return Ok(UsuarioStore.GetAll);
+            return Ok(_dbContext.Usuarios.ToList());
         }
 
         [HttpGet("{id:int}", Name = "GetUsuario")]
@@ -38,9 +43,7 @@ namespace Eventos_API.Controllers
             {
                 return BadRequest();
             }
-            List<UsuarioDTO> list = UsuarioStore.GetAll;
-
-            UsuarioDTO usu = list.FirstOrDefault(u => u.Id == id);
+            var usu = _dbContext.Usuarios.FirstOrDefault(u => u.Id == id);
 
             if (usu == null)
             {
@@ -55,7 +58,7 @@ namespace Eventos_API.Controllers
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public ActionResult<UsuarioDTO> CreateUsuario([FromBody] UsuarioDTO usu)
         {
-            if (UsuarioStore.GetAll.FirstOrDefault(u => u.Name.ToLower() == usu.Name.ToLower()) != null)
+            if (_dbContext.Usuarios.FirstOrDefault(u => u.Name.ToLower() == usu.Name.ToLower()) != null)
             {
                 ModelState.AddModelError("CustomError", "El usuario ya existe en la BBDD");
                 return BadRequest(ModelState);
@@ -68,9 +71,12 @@ namespace Eventos_API.Controllers
             {
                 return StatusCode(StatusCodes.Status500InternalServerError);
             }
-            usu.Id = UsuarioStore.GetAll.Count + 1;
 
-            UsuarioStore.GetAll.Add(usu);
+            int id = _dbContext.Usuarios.ToList().LastOrDefault() != null ? _dbContext.Usuarios.ToList().LastOrDefault().Id + 1 : 0;
+
+            Usuario model = new() { Id = id, Name = usu.Name, Surname1 = usu.Surname1, Surname2 = usu.Surname2, Age = usu.Age, BirthDate = usu.BirthDate, High = usu.High, Location = usu.Location };
+            _dbContext.Add(model);
+            _dbContext.SaveChanges();
 
 
 
@@ -88,13 +94,14 @@ namespace Eventos_API.Controllers
                 return BadRequest();
             }
 
-            var usu = UsuarioStore.GetAll.FirstOrDefault(u => u.Id == id);
+            var usu = _dbContext.Usuarios.FirstOrDefault(u => u.Id == id);
             if (usu == null)
             {
                 ModelState.AddModelError("CustomError", "El usuario no existe en la BBDD");
                 return NotFound(ModelState);
             }
-            UsuarioStore.GetAll.Remove(usu);
+            _dbContext.Usuarios.Remove(usu);
+            _dbContext.SaveChanges();
 
             return NoContent();
         }
@@ -109,7 +116,7 @@ namespace Eventos_API.Controllers
                 return BadRequest();
             }
 
-            var usuario = UsuarioStore.GetAll.FirstOrDefault(usu => usu.Id == id);
+            var usuario = _dbContext.Usuarios.AsNoTracking().FirstOrDefault(usu => usu.Id == id);
             if (usuario == null)
             {
                 ModelState.AddModelError("CustomError", "El usuario no existe en la BBDD");
@@ -117,9 +124,9 @@ namespace Eventos_API.Controllers
             }
             else
             {
-                usuario.Name = usu.Name;
-                usuario.Age = usu.Age;
-                usuario.High = usu.High;
+                Usuario model = new() { Id = usu.Id, Name = usu.Name, Surname1 = usu.Surname1, Surname2 = usu.Surname2, Age = usu.Age, BirthDate = usu.BirthDate, High = usu.High, Location = usu.Location };
+                _dbContext.Usuarios.Update(model);
+                _dbContext.SaveChanges();
             }
 
             return (CreatedAtRoute("GetUsuario", new { id = usu.Id }, usu));
@@ -130,22 +137,30 @@ namespace Eventos_API.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public IActionResult UpdatePartialUsuario(int id, JsonPatchDocument<UsuarioDTO> patch)
         {
-            if (patch == null || id == 0)
+            if (patch == null)
             {
                 return BadRequest();
             }
 
-            var usu = UsuarioStore.GetAll.FirstOrDefault(u => u.Id == id);
+            var usu = _dbContext.Usuarios.AsNoTracking().FirstOrDefault(u => u.Id == id);
+
+            UsuarioDTO dto = new() { Id = usu.Id, Name = usu.Name, Surname1 = usu.Surname1, Surname2 = usu.Surname2, Age = usu.Age, BirthDate = usu.BirthDate, High = usu.High, Location = usu.Location };
+
             if (usu == null)
             {
                 return BadRequest();
             }
-            patch.ApplyTo(usu, ModelState);
+            patch.ApplyTo(dto, ModelState);
             if (!ModelState.IsValid)
             {
-                ModelState.AddModelError("CustomError", "");
+                ModelState.AddModelError("CustomError", "No fue posible actualizar el usuario.");
                 return BadRequest(ModelState);
             }
+
+            Usuario model = new() { Id = dto.Id, Name = dto.Name, Surname1 = dto.Surname1, Surname2 = dto.Surname2, Age = dto.Age, BirthDate = dto.BirthDate, High = dto.High, Location = dto.Location };
+
+            _dbContext.Usuarios.Update(model);
+            _dbContext.SaveChanges();
 
             return NoContent();
         }
