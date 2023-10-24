@@ -1,5 +1,7 @@
 ﻿using Eventos_API.Models;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Hosting;
+using System.Diagnostics;
 
 namespace Eventos_API.DataStorage
 {
@@ -12,8 +14,28 @@ namespace Eventos_API.DataStorage
         }
         public DbSet<Usuario> Usuarios { get; set; }
 
+        public DbSet<Evento> Eventos { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.Entity<Usuario>()
+            .HasOne(s => s.Evento)
+            .WithMany(g => g.Usuarios)
+            .HasForeignKey(s => s.EventoId)
+            .IsRequired();
+
+            Evento evento = new Evento
+            {
+                Id = 1,
+                Name = "FIESTA"
+            };
+
+            //modelBuilder.Entity<Evento>()
+            //.HasMany(e => e.Usuarios)
+            //.WithOne(e => e.Evento)
+            //.HasForeignKey(e => e.Id)
+            //.IsRequired();
+
             modelBuilder.Entity<Usuario>().HasData(
                 new Usuario
                 {
@@ -25,7 +47,8 @@ namespace Eventos_API.DataStorage
                     BirthDate = DateTime.ParseExact("19830314T08:30:52Z", "yyyyMMddTHH:mm:ssZ",
                                 System.Globalization.CultureInfo.InvariantCulture),
                     Age = 40,
-                    High = 180
+                    High = 180,
+                    EventoId = 1,
                 },
                 new Usuario
                 {
@@ -37,7 +60,9 @@ namespace Eventos_API.DataStorage
                     BirthDate = DateTime.ParseExact("19820704T08:30:52Z", "yyyyMMddTHH:mm:ssZ",
                                 System.Globalization.CultureInfo.InvariantCulture),
                     Age = 41,
-                    High = 185
+                    High = 185,
+                    EventoId = 1,
+
                 },
                 new Usuario
                 {
@@ -49,7 +74,9 @@ namespace Eventos_API.DataStorage
                     BirthDate = DateTime.ParseExact("19791211T08:30:52Z", "yyyyMMddTHH:mm:ssZ",
                                 System.Globalization.CultureInfo.InvariantCulture),
                     Age = 44,
-                    High = 160
+                    High = 160,
+                    EventoId = 1,
+
                 },
                 new Usuario
                 {
@@ -61,7 +88,9 @@ namespace Eventos_API.DataStorage
                     BirthDate = DateTime.ParseExact("19770506T08:30:52Z", "yyyyMMddTHH:mm:ssZ",
                                 System.Globalization.CultureInfo.InvariantCulture),
                     Age = 46,
-                    High = 175
+                    High = 175,
+                    EventoId = 1,
+
                 },
                 new Usuario
                 {
@@ -73,9 +102,13 @@ namespace Eventos_API.DataStorage
                     BirthDate = DateTime.ParseExact("19830314T08:30:52Z", "yyyyMMddTHH:mm:ssZ",
                                 System.Globalization.CultureInfo.InvariantCulture),
                     Age = 40,
-                    High = 150
+                    High = 150,
+                    EventoId = 1,
+
                 }
                 );
+
+            modelBuilder.Entity<Evento>().HasData(evento);
         }
     }
 }

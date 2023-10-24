@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Eventos_API.Migrations
 {
     [DbContext(typeof(ApplicationDBContext))]
-    [Migration("20231023070832_SeedUsuariosTable")]
-    partial class SeedUsuariosTable
+    [Migration("20231024075401_SeedEvento")]
+    partial class SeedEvento
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -25,6 +25,27 @@ namespace Eventos_API.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
+            modelBuilder.Entity("Eventos_API.Models.Evento", b =>
+                {
+                    b.Property<int>("Id")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Eventos");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Name = "FIESTA"
+                        });
+                });
+
             modelBuilder.Entity("Eventos_API.Models.Usuario", b =>
                 {
                     b.Property<int>("Id")
@@ -35,6 +56,9 @@ namespace Eventos_API.Migrations
 
                     b.Property<DateTime>("BirthDate")
                         .HasColumnType("datetime2");
+
+                    b.Property<int>("EventoId")
+                        .HasColumnType("int");
 
                     b.Property<int>("High")
                         .HasColumnType("int");
@@ -57,6 +81,8 @@ namespace Eventos_API.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("EventoId");
+
                     b.ToTable("Usuarios");
 
                     b.HasData(
@@ -65,6 +91,7 @@ namespace Eventos_API.Migrations
                             Id = 1,
                             Age = 40,
                             BirthDate = new DateTime(1983, 3, 14, 9, 30, 52, 0, DateTimeKind.Local),
+                            EventoId = 1,
                             High = 180,
                             Location = "Barakaldo",
                             Name = "Ruben",
@@ -76,6 +103,7 @@ namespace Eventos_API.Migrations
                             Id = 2,
                             Age = 41,
                             BirthDate = new DateTime(1982, 7, 4, 10, 30, 52, 0, DateTimeKind.Local),
+                            EventoId = 1,
                             High = 185,
                             Location = "Amorebieta",
                             Name = "Unai",
@@ -87,6 +115,7 @@ namespace Eventos_API.Migrations
                             Id = 3,
                             Age = 44,
                             BirthDate = new DateTime(1979, 12, 11, 9, 30, 52, 0, DateTimeKind.Local),
+                            EventoId = 1,
                             High = 160,
                             Location = "Barakaldo",
                             Name = "Marta",
@@ -98,6 +127,7 @@ namespace Eventos_API.Migrations
                             Id = 4,
                             Age = 46,
                             BirthDate = new DateTime(1977, 5, 6, 10, 30, 52, 0, DateTimeKind.Local),
+                            EventoId = 1,
                             High = 175,
                             Location = "Barakaldo",
                             Name = "Javier",
@@ -109,12 +139,29 @@ namespace Eventos_API.Migrations
                             Id = 5,
                             Age = 40,
                             BirthDate = new DateTime(1983, 3, 14, 9, 30, 52, 0, DateTimeKind.Local),
+                            EventoId = 1,
                             High = 150,
                             Location = "Murcia",
                             Name = "Jaime",
                             Surname1 = "Urrutia",
                             Surname2 = "Gonzalez"
                         });
+                });
+
+            modelBuilder.Entity("Eventos_API.Models.Usuario", b =>
+                {
+                    b.HasOne("Eventos_API.Models.Evento", "Evento")
+                        .WithMany("Usuarios")
+                        .HasForeignKey("EventoId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Evento");
+                });
+
+            modelBuilder.Entity("Eventos_API.Models.Evento", b =>
+                {
+                    b.Navigation("Usuarios");
                 });
 #pragma warning restore 612, 618
         }
