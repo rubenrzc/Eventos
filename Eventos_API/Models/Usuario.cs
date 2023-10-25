@@ -14,7 +14,7 @@ namespace Eventos_API.Models
         public required string Name { get; set; }
 
         [Required]
-        public string Surname1 { get; set; }
+        public required string Surname1 { get; set; }
 
         public string? Surname2 { get; set; }
 
@@ -24,8 +24,8 @@ namespace Eventos_API.Models
         public int Age { get; set; }
 
         public int High { get; set; }
-
-        [ForeignKey("Evento")]
+        
+        [ForeignKey("Id")]
         public int EventoId { get; set; }
 
         [JsonIgnore]

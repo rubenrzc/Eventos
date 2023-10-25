@@ -67,14 +67,10 @@ namespace Eventos_API.Controllers
             {
                 return BadRequest();
             }
-            if (usu.Id > 0)
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError);
-            }
 
-            int id = _dbContext.Usuarios.ToList().LastOrDefault() != null ? _dbContext.Usuarios.ToList().LastOrDefault().Id + 1 : 0;
+            int id = _dbContext.Usuarios.ToList().LastOrDefault() != null ? _dbContext.Usuarios.ToList().LastOrDefault()!.Id + 1 : 0;
 
-            Usuario model = new() { Id = id, Name = usu.Name, Surname1 = usu.Surname1, Surname2 = usu.Surname2, Age = usu.Age, BirthDate = usu.BirthDate, High = usu.High, Location = usu.Location };
+            Usuario model = new() { Id = id, Name = usu.Name, Surname1 = usu.Surname1, Surname2 = usu.Surname2, Age = usu.Age, BirthDate = usu.BirthDate, High = usu.High, Location = usu.Location, EventoId = usu.EventoId };
             _dbContext.Add(model);
             _dbContext.SaveChanges();
 
@@ -124,7 +120,7 @@ namespace Eventos_API.Controllers
             }
             else
             {
-                Usuario model = new() { Id = usu.Id, Name = usu.Name, Surname1 = usu.Surname1, Surname2 = usu.Surname2, Age = usu.Age, BirthDate = usu.BirthDate, High = usu.High, Location = usu.Location };
+                Usuario model = new() { Id = usu.Id, Name = usu.Name, Surname1 = usu.Surname1, Surname2 = usu.Surname2, Age = usu.Age, BirthDate = usu.BirthDate, High = usu.High, Location = usu.Location, EventoId = usu.EventoId };
                 _dbContext.Usuarios.Update(model);
                 _dbContext.SaveChanges();
             }
@@ -144,24 +140,26 @@ namespace Eventos_API.Controllers
 
             var usu = _dbContext.Usuarios.AsNoTracking().FirstOrDefault(u => u.Id == id);
 
-            UsuarioDTO dto = new() { Id = usu.Id, Name = usu.Name, Surname1 = usu.Surname1, Surname2 = usu.Surname2, Age = usu.Age, BirthDate = usu.BirthDate, High = usu.High, Location = usu.Location };
-
-            if (usu == null)
+            if (usu != null)
             {
-                return BadRequest();
+                UsuarioDTO dto = new() { Id = usu.Id, Name = usu.Name, Surname1 = usu.Surname1, Surname2 = usu.Surname2, Age = usu.Age, BirthDate = usu.BirthDate, High = usu.High, Location = usu.Location, EventoId = usu.EventoId };
+
+                if (usu == null)
+                {
+                    return BadRequest();
+                }
+                patch.ApplyTo(dto, ModelState);
+                if (!ModelState.IsValid)
+                {
+                    ModelState.AddModelError("CustomError", "No fue posible actualizar el usuario.");
+                    return BadRequest(ModelState);
+                }
+
+                Usuario model = new() { Id = dto.Id, Name = dto.Name, Surname1 = dto.Surname1, Surname2 = dto.Surname2, Age = dto.Age, BirthDate = dto.BirthDate, High = dto.High, Location = dto.Location, EventoId= dto.EventoId };
+
+                _dbContext.Usuarios.Update(model);
+                _dbContext.SaveChanges();
             }
-            patch.ApplyTo(dto, ModelState);
-            if (!ModelState.IsValid)
-            {
-                ModelState.AddModelError("CustomError", "No fue posible actualizar el usuario.");
-                return BadRequest(ModelState);
-            }
-
-            Usuario model = new() { Id = dto.Id, Name = dto.Name, Surname1 = dto.Surname1, Surname2 = dto.Surname2, Age = dto.Age, BirthDate = dto.BirthDate, High = dto.High, Location = dto.Location };
-
-            _dbContext.Usuarios.Update(model);
-            _dbContext.SaveChanges();
-
             return NoContent();
         }
 

@@ -20,5 +20,7 @@ namespace Eventos_API.Models.Dtos
         public int Age{ get; set; }
 
         public int High{ get; set; }
+
+        public int EventoId { get; set; }
     }
 }

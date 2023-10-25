@@ -13,6 +13,6 @@ namespace Eventos_API.Models
         [Required]
         public required string Name { get; set; }
 
-        public ICollection<Usuario> Usuarios { get; set; }
+        public ICollection<Usuario>? Usuarios { get; set; }
     }
 }
