@@ -40,6 +40,16 @@ namespace Eventos_API.Migrations
                         {
                             Id = 1,
                             Name = "FIESTA"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Name = "HALLOWEEN"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Name = "ASTE NAGUSIA"
                         });
                 });
 
@@ -48,17 +58,16 @@ namespace Eventos_API.Migrations
                     b.Property<int>("Id")
                         .HasColumnType("int");
 
-                    b.Property<int>("Age")
+                    b.Property<int?>("Age")
                         .HasColumnType("int");
 
-                    b.Property<DateTime>("BirthDate")
+                    b.Property<DateTime?>("BirthDate")
                         .HasColumnType("datetime2");
 
                     b.Property<int?>("EventoId")
-                        .IsRequired()
                         .HasColumnType("int");
 
-                    b.Property<int>("High")
+                    b.Property<int?>("High")
                         .HasColumnType("int");
 
                     b.Property<string>("Location")
@@ -148,9 +157,7 @@ namespace Eventos_API.Migrations
                 {
                     b.HasOne("Eventos_API.Models.Evento", "Evento")
                         .WithMany("Usuarios")
-                        .HasForeignKey("EventoId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("EventoId");
 
                     b.Navigation("Evento");
                 });

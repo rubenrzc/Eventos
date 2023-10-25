@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Eventos_API.Migrations
 {
     [DbContext(typeof(ApplicationDBContext))]
-    [Migration("20231024075401_SeedEvento")]
-    partial class SeedEvento
+    [Migration("20231025085648_Modifications_BBDD_INSERTS")]
+    partial class Modifications_BBDD_INSERTS
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -43,6 +43,16 @@ namespace Eventos_API.Migrations
                         {
                             Id = 1,
                             Name = "FIESTA"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Name = "HALLOWEEN"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Name = "ASTE NAGUSIA"
                         });
                 });
 
@@ -51,20 +61,19 @@ namespace Eventos_API.Migrations
                     b.Property<int>("Id")
                         .HasColumnType("int");
 
-                    b.Property<int>("Age")
+                    b.Property<int?>("Age")
                         .HasColumnType("int");
 
-                    b.Property<DateTime>("BirthDate")
+                    b.Property<DateTime?>("BirthDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("EventoId")
+                    b.Property<int?>("EventoId")
                         .HasColumnType("int");
 
-                    b.Property<int>("High")
+                    b.Property<int?>("High")
                         .HasColumnType("int");
 
                     b.Property<string>("Location")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Name")
@@ -76,7 +85,6 @@ namespace Eventos_API.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Surname2")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
@@ -152,9 +160,7 @@ namespace Eventos_API.Migrations
                 {
                     b.HasOne("Eventos_API.Models.Evento", "Evento")
                         .WithMany("Usuarios")
-                        .HasForeignKey("EventoId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("EventoId");
 
                     b.Navigation("Evento");
                 });

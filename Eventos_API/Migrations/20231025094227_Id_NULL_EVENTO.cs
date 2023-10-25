@@ -5,7 +5,7 @@
 namespace Eventos_API.Migrations
 {
     /// <inheritdoc />
-    public partial class ActualizacionDTO : Migration
+    public partial class Id_NULL_EVENTO : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)

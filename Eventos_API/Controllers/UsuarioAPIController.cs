@@ -142,7 +142,7 @@ namespace Eventos_API.Controllers
 
             if (usu != null)
             {
-                UsuarioDTO dto = new() { Id = usu.Id, Name = usu.Name, Surname1 = usu.Surname1, Surname2 = usu.Surname2, Age = usu.Age, BirthDate = usu.BirthDate, High = usu.High, Location = usu.Location, EventoId = usu.EventoId };
+                UsuarioDTO dto = new() { Id = usu.Id, Name = usu.Name, Surname1 = usu.Surname1, Surname2 = usu.Surname2, Age = (int)usu.Age, BirthDate = (DateTime)usu.BirthDate, High = (int)usu.High, Location = usu.Location, EventoId = (int)usu.EventoId };
 
                 if (usu == null)
                 {

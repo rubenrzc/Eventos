@@ -15,12 +15,12 @@ namespace Eventos_API.Models.Dtos
 
         public string? Location { get; set; }
 
-        public DateTime BirthDate { get; set; }
+        public DateTime? BirthDate { get; set; }
 
-        public int Age{ get; set; }
+        public int? Age{ get; set; }
 
-        public int High{ get; set; }
+        public int? High{ get; set; }
 
-        public int EventoId { get; set; }
+        public int? EventoId { get; set; }
     }
 }

@@ -20,13 +20,13 @@ namespace Eventos_API.Models
 
         public string? Location { get; set; }
 
-        public DateTime BirthDate { get; set; }
-        public int Age { get; set; }
+        public DateTime? BirthDate { get; set; }
+        public int? Age { get; set; }
 
-        public int High { get; set; }
+        public int? High { get; set; }
         
         [ForeignKey("Id")]
-        public int EventoId { get; set; }
+        public int? EventoId { get; set; }
 
         [JsonIgnore]
         public Evento? Evento { get; set; }

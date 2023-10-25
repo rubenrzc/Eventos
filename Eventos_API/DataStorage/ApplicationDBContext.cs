@@ -8,6 +8,7 @@ namespace Eventos_API.DataStorage
     public class ApplicationDBContext : DbContext
     {
         // Comandos a lanzar para la migracion: add-migration addUsuarios por ejemplo y despues update-database
+        // Para publicar copiar los archivos que se crean en la carpeta publish por defecto(¡¡¡OJO si no existe crearla en bin/release/net7/!!!)
         public ApplicationDBContext(DbContextOptions<ApplicationDBContext> options) : base(options)
         {
 
@@ -21,14 +22,7 @@ namespace Eventos_API.DataStorage
             modelBuilder.Entity<Usuario>()
             .HasOne(s => s.Evento)
             .WithMany(g => g.Usuarios)
-            .HasForeignKey(s => s.EventoId)
-            .IsRequired();
-
-            Evento evento = new Evento
-            {
-                Id = 1,
-                Name = "FIESTA"
-            };
+            .HasForeignKey(s => s.EventoId);
 
             //modelBuilder.Entity<Evento>()
             //.HasMany(e => e.Usuarios)
@@ -108,7 +102,23 @@ namespace Eventos_API.DataStorage
                 }
                 );
 
-            modelBuilder.Entity<Evento>().HasData(evento);
+            modelBuilder.Entity<Evento>().HasData(
+                new Evento
+                {
+                    Id = 1,
+                    Name = "FIESTA"
+                },
+                new Evento
+                {
+                    Id = 2,
+                    Name = "HALLOWEEN"
+                },
+                new Evento
+                {
+                    Id = 3,
+                    Name = "ASTE NAGUSIA"
+                }
+                );
         }
     }
 }

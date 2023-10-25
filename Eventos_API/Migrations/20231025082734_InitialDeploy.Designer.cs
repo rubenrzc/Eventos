@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Eventos_API.Migrations
 {
     [DbContext(typeof(ApplicationDBContext))]
-    [Migration("20231025072157_ModificarDto")]
-    partial class ModificarDto
+    [Migration("20231025082734_InitialDeploy")]
+    partial class InitialDeploy
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
